@@ -32,6 +32,29 @@ typedef struct
     int evade;
 } char_stats;
 
+#define MAX_HP 45
+#define MAX_SP 18
+
+static float *state_array_init(void)
+{
+    return malloc(MAX_HP*MAX_SP*MAX_HP*MAX_SP*2);
+}
+
+static float state_array_get(float *state, int p1_hp, int p1_sp, int p2_hp, int p2_sp, int turn)
+{
+    return state[p1_hp+MAX_HP*(p1_hp+MAX_SP*(p2_hp+MAX_HP*(p2_sp+MAX_SP*turn)))];
+}
+
+static void state_array_set(float *state, int p1_hp, int p1_sp, int p2_hp, int p2_sp, int turn, float value)
+{
+    state[p1_hp+MAX_HP*(p1_hp+MAX_SP*(p2_hp+MAX_HP*(p2_sp+MAX_SP*turn)))] = value;
+}
+
+static void state_array_destroy(float *state)
+{
+    free(state);
+}
+
 int main(int argc, char **argv)
 {
     // TODO: parameters?
