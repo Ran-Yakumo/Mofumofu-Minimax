@@ -23,7 +23,20 @@
 #include <inttypes.h>
 #include <stdint.h>
 
+typedef struct
+{
+    int hp;
+    int sp;
+    int attack;
+    int defense;
+    int evade;
+} char_stats;
+
 int main(int argc, char **argv)
 {
+    // TODO: parameters?
+    char_stats player1 = {25, 0, 1, 1, 0};
+    char_stats player2 = {30, 0,-1, 1, 1};
+
     return 0;
 }
