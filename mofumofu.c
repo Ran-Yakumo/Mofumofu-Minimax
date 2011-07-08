@@ -32,12 +32,12 @@ typedef struct
     int evade;
 } char_stats;
 
-#define MAX_HP 45
-#define MAX_SP 18
+#define MAX_HP (45+1)
+#define MAX_SP (18+1)
 
 typedef float state;
 
-static state *state_array_init(void)
+static state *state_array_create(void)
 {
     return malloc(MAX_HP*MAX_SP*MAX_HP*MAX_SP*2);
 }
@@ -52,6 +52,21 @@ static void state_array_set(state *s, int p1_hp, int p1_sp, int p2_hp, int p2_sp
     s[p1_hp+MAX_HP*(p1_hp+MAX_SP*(p2_hp+MAX_HP*(p2_sp+MAX_SP*turn)))] = value;
 }
 
+static void state_array_init(state *s)
+{
+    int i,j,k,l;
+    /* If our HP is zero, we lose: probability of winning is zero. */
+    for(i = 0; i < MAX_SP; i++)
+        for(j = 0; j < MAX_HP; j++)
+            for(k = 0; k < MAX_SP; k++)
+                for(l = 0; l < 2; l++){
+                    // If our HP is zero, we lose: probability of winning is zero.
+                    state_array_set(s, 0, i, j, k, l, 0.0);
+                    // If their HP is zero, we win: probability of winning is one.
+                    state_array_set(s, j, i, 0, k, l, 1.0);
+                }
+}
+
 static void state_array_destroy(state *s)
 {
     free(s);
@@ -60,13 +75,16 @@ static void state_array_destroy(state *s)
 int main(int argc, char **argv)
 {
     // TODO: parameters?
+    
+    // We are player 1.  The opponent is player 2.
     char_stats player1 = {25, 0, 1, 1, 0};
     char_stats player2 = {30, 0,-1, 1, 1};
-    state *s = state_array_init();
+    state *s = state_array_create();
     if(!s){
         fprintf(stderr, "Failed to allocate state array!\n");
         return -1;
     }
+    state_array_init(s);
 
     state_array_destroy(s);
     return 0;
