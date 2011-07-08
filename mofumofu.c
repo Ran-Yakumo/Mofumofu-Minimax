@@ -35,24 +35,26 @@ typedef struct
 #define MAX_HP 45
 #define MAX_SP 18
 
-static float *state_array_init(void)
+typedef float state;
+
+static state *state_array_init(void)
 {
     return malloc(MAX_HP*MAX_SP*MAX_HP*MAX_SP*2);
 }
 
-static float state_array_get(float *state, int p1_hp, int p1_sp, int p2_hp, int p2_sp, int turn)
+static state state_array_get(state *s, int p1_hp, int p1_sp, int p2_hp, int p2_sp, int turn)
 {
-    return state[p1_hp+MAX_HP*(p1_hp+MAX_SP*(p2_hp+MAX_HP*(p2_sp+MAX_SP*turn)))];
+    return s[p1_hp+MAX_HP*(p1_hp+MAX_SP*(p2_hp+MAX_HP*(p2_sp+MAX_SP*turn)))];
 }
 
-static void state_array_set(float *state, int p1_hp, int p1_sp, int p2_hp, int p2_sp, int turn, float value)
+static void state_array_set(state *s, int p1_hp, int p1_sp, int p2_hp, int p2_sp, int turn, state value)
 {
-    state[p1_hp+MAX_HP*(p1_hp+MAX_SP*(p2_hp+MAX_HP*(p2_sp+MAX_SP*turn)))] = value;
+    s[p1_hp+MAX_HP*(p1_hp+MAX_SP*(p2_hp+MAX_HP*(p2_sp+MAX_SP*turn)))] = value;
 }
 
-static void state_array_destroy(float *state)
+static void state_array_destroy(state *s)
 {
-    free(state);
+    free(s);
 }
 
 int main(int argc, char **argv)
@@ -60,6 +62,12 @@ int main(int argc, char **argv)
     // TODO: parameters?
     char_stats player1 = {25, 0, 1, 1, 0};
     char_stats player2 = {30, 0,-1, 1, 1};
+    state *s = state_array_init();
+    if(!s){
+        fprintf(stderr, "Failed to allocate state array!\n");
+        return -1;
+    }
 
+    state_array_destroy(s);
     return 0;
 }
